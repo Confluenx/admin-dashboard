@@ -58,7 +58,7 @@ export function ScoutsSection() {
             <Download className="h-4 w-4 mr-2" />
             Export Data
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">Add Scout</Button>
+          <Button className="bg-primary hover:bg-primary/90">Add Scout</Button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

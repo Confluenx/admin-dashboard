@@ -46,7 +46,7 @@ export function NotificationsSection() {
         </div>
         <div className="flex gap-3">
           <Button variant="outline">Mark All Read</Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">Create Notification</Button>
+          <Button className="bg-primary hover:bg-primary/90">Create Notification</Button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

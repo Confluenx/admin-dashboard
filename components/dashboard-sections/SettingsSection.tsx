@@ -14,7 +14,7 @@ export function SettingsSection() {
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
           <p className="text-gray-600 mt-1">Platform configuration and preferences</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">Save Changes</Button>
+        <Button className="bg-primary hover:bg-primary/90">Save Changes</Button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">

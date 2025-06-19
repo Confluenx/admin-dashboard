@@ -55,7 +55,7 @@ export function SupportSection() {
             <Download className="h-4 w-4 mr-2" />
             Export Tickets
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">Create Ticket</Button>
+          <Button className="bg-primary hover:bg-primary/90">Create Ticket</Button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

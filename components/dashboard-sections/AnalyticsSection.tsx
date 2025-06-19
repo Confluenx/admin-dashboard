@@ -122,7 +122,7 @@ export function AnalyticsSection() {
                 <span className="text-sm text-gray-600">Football</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-24 bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: "45%" }}></div>
+                    <div className="bg-primary h-2 rounded-full" style={{ width: "45%" }}></div>
                   </div>
                   <span className="text-sm font-medium">45%</span>
                 </div>

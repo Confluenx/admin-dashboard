@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react'
 import { apiRequest } from '../../lib/api'
 
@@ -42,7 +43,7 @@ export default function ForgotPasswordForm() {
       {success && <div className="text-green-600">{success}</div>}
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 disabled:opacity-50"
         disabled={loading}
       >
         {loading ? 'Sending...' : 'Send OTP'}

@@ -64,7 +64,7 @@ export function DashboardSection() {
           <p className="text-gray-600 mt-1">Welcome back, Admin. Here's what's happening with your platform today.</p>
         </div>
         <div className="flex gap-3">
-          <Button className="bg-blue-600 hover:bg-blue-700">Create Trial</Button>
+          <Button className="bg-primary hover:bg-primary/90">Create Trial</Button>
           <Button variant="outline">Generate Report</Button>
         </div>
       </div>
@@ -197,7 +197,7 @@ export function DashboardSection() {
             <div className="space-y-4">
               {recentActivities.map((activity) => (
                 <div key={activity.id} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-900">{activity.message}</p>
                     <div className="flex items-center justify-between mt-1">

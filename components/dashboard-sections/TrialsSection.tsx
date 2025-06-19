@@ -58,7 +58,7 @@ export function TrialsSection() {
             <Calendar className="h-4 w-4 mr-2" />
             Calendar View
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">Create Trial</Button>
+          <Button className="bg-primary hover:bg-primary/90">Create Trial</Button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
