@@ -2,36 +2,32 @@ import { makeAutoObservable } from 'mobx'
 
 class AuthStore {
   token: string | null = null
-  email: string | null = null
+  user: any = null
 
   constructor() {
     makeAutoObservable(this)
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem('token')
-      this.email = localStorage.getItem('email')
+      const user = localStorage.getItem('user')
+      this.user = user ? JSON.parse(user) : null
     }
   }
 
-  setToken(token: string) {
+  setAuth(token: string, user: any) {
     this.token = token
+    this.user = user
     if (typeof window !== 'undefined') {
       localStorage.setItem('token', token)
-    }
-  }
-
-  setEmail(email: string) {
-    this.email = email
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('email', email)
+      localStorage.setItem('user', JSON.stringify(user))
     }
   }
 
   logout() {
     this.token = null
-    this.email = null
+    this.user = null
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token')
-      localStorage.removeItem('email')
+      localStorage.removeItem('user')
     }
   }
 }

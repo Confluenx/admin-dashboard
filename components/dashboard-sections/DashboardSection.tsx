@@ -5,6 +5,10 @@ import { Badge } from "../ui/badge"
 import { Users, Search, Calendar, TrendingUp, TrendingDown, Activity } from "lucide-react"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart"
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import authStore from "@/store/authStore"
+import { ChartBarMultiple } from "../bar-chart/mulitiple-bar-chart"
+import { RecentActivity } from "../recent-activity"
+import { SportDistro } from "../sports-distribution"
 
 // Dummy data (should be passed as props in a real app)
 const chartData = [
@@ -60,8 +64,8 @@ export function DashboardSection() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back, Admin. Here's what's happening with your platform today.</p>
+          <h1 className="text-3xl font-bold text-gray-900 capitalize">Welcome back, {authStore.user?.name}.</h1>
+          <p className="text-gray-600 mt-1"> Here's what's happening with your platform today.</p>
         </div>
         <div className="flex gap-3">
           <Button className="bg-primary hover:bg-primary/90">Create Trial</Button>
@@ -129,100 +133,12 @@ export function DashboardSection() {
       </div>
 
       {/* Charts and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Platform Growth</CardTitle>
-            <CardDescription>User registrations and activity over time</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer
-              config={{
-                athletes: {
-                  label: "Athletes",
-                  color: "hsl(var(--chart-1))",
-                },
-                scouts: {
-                  label: "Scouts",
-                  color: "hsl(var(--chart-2))",
-                },
-                trials: {
-                  label: "Trials",
-                  color: "hsl(var(--chart-3))",
-                },
-              }}
-              className="h-[300px]"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area
-                    type="monotone"
-                    dataKey="athletes"
-                    stackId="1"
-                    stroke="#3b82f6"
-                    fill="#3b82f6"
-                    fillOpacity={0.6}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="scouts"
-                    stackId="1"
-                    stroke="#10b981"
-                    fill="#10b981"
-                    fillOpacity={0.6}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="trials"
-                    stackId="1"
-                    stroke="#f59e0b"
-                    fill="#f59e0b"
-                    fillOpacity={0.6}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+        <SportDistro />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest platform updates</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">{activity.message}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-xs text-gray-500">{activity.time}</p>
-                      <Badge
-                        variant={
-                          activity.status === "active"
-                            ? "default"
-                            : activity.status === "completed"
-                              ? "secondary"
-                              : activity.status === "pending"
-                                ? "outline"
-                                : "destructive"
-                        }
-                        className="text-xs"
-                      >
-                        {activity.status}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <ChartBarMultiple />
+
+        <RecentActivity />
       </div>
     </div>
   )

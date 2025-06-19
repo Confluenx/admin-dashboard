@@ -22,17 +22,20 @@ export default function LoginForm() {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       })
+
+      console.log(data?.data)
       // Assume token is in data.token
-      if (data.token) {
-        authStore.setToken(data.token)
-        authStore.setEmail(email)
+      if (data?.data.token) {
+        // After successful login:
+        authStore.setAuth(data.data.token, data.data.user)
         setSuccess('Login successful! Redirecting...')
-        setTimeout(() => router.push('/admin'), 1000)
+        setTimeout(() => router.push('/'), 1000)
       } else {
         setError('No token received from server')
       }
     } catch (err: any) {
       setError(err.message)
+      console.log(error)
     } finally {
       setLoading(false)
     }

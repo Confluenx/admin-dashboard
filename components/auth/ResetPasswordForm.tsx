@@ -4,7 +4,7 @@ import { apiRequest } from '../../lib/api'
 import authStore from '../../store/authStore'
 
 export default function ResetPasswordForm() {
-  const [email, setEmail] = useState(authStore.email || '')
+  const [email, setEmail] = useState(authStore?.user.email || '')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
