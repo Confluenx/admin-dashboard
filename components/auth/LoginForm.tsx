@@ -29,7 +29,7 @@ export default function LoginForm() {
         // After successful login:
         authStore.setAuth(data.data.token, data.data.user)
         setSuccess('Login successful! Redirecting...')
-        setTimeout(() => router.push('/'), 1000)
+        router.push('/')
       } else {
         setError('No token received from server')
       }
