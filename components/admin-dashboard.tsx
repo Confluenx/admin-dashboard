@@ -71,6 +71,11 @@ export const AdminDashboard = observer(function AdminDashboard() {
     }
   }, [authStore.token, router])
 
+  const handleLogOut = () => {
+    authStore.logout
+    router.push('/auth/login')
+  }
+
   const renderContent = () => {
     switch (activeSection) {
       case "dashboard":
@@ -101,10 +106,10 @@ export const AdminDashboard = observer(function AdminDashboard() {
           <SidebarHeader className="border-b border-gray-200 p-4">
             <div className="flex items-center space-x-3">
               <div className="relative h-8 w-8">
-                <Image src="/images/confluenxe-logo.png" alt="Confluenxe" fill className="object-contain" />
+                <Image src="/logo.png" alt="Confluenxe" fill className="object-contain rounded-sm" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Admin Panel</h2>
+                <h2 className="text-lg font-bold text-gray-900">Confluenxe</h2>
               </div>
             </div>
           </SidebarHeader>
@@ -154,7 +159,7 @@ export const AdminDashboard = observer(function AdminDashboard() {
                   Settings
                 </DropdownMenuItem>
                 <Separator />
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleLogOut()}>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarFooter>

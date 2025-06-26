@@ -10,8 +10,10 @@ export async function apiRequest(endpoint: string, options: any = {}) {
       method: options.method || 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
         ...(options.headers || {}),
       },
+
       data: options.body ? JSON.parse(options.body) : undefined,
       params: options.params,
     })

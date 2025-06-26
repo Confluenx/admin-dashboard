@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
@@ -9,57 +9,14 @@ import authStore from "@/store/authStore"
 import { ChartBarMultiple } from "../bar-chart/mulitiple-bar-chart"
 import { RecentActivity } from "../recent-activity"
 import { SportDistro } from "../sports-distribution"
-
-// Dummy data (should be passed as props in a real app)
-const chartData = [
-  { month: "Jan", athletes: 450, scouts: 120, trials: 80 },
-  { month: "Feb", athletes: 380, scouts: 140, trials: 95 },
-  { month: "Mar", athletes: 520, scouts: 180, trials: 120 },
-  { month: "Apr", athletes: 680, scouts: 220, trials: 150 },
-  { month: "May", athletes: 890, scouts: 280, trials: 180 },
-  { month: "Jun", athletes: 1200, scouts: 350, trials: 220 },
-  { month: "Jul", athletes: 1350, scouts: 380, trials: 240 },
-]
-
-const recentActivities = [
-  {
-    id: 1,
-    type: "trial",
-    message: "New trial application from John Smith",
-    time: "2 minutes ago",
-    status: "pending",
-  },
-  {
-    id: 2,
-    type: "trial",
-    message: "Soccer trial in Manchester created",
-    time: "15 minutes ago",
-    status: "active",
-  },
-  {
-    id: 3,
-    type: "verification",
-    message: "Scout profile verified: Elite Sports FC",
-    time: "1 hour ago",
-    status: "completed",
-  },
-  {
-    id: 4,
-    type: "report",
-    message: "Flagged content reported by user",
-    time: "2 hours ago",
-    status: "review",
-  },
-  {
-    id: 5,
-    type: "subscription",
-    message: "Premium subscription renewed",
-    time: "3 hours ago",
-    status: "completed",
-  },
-]
+import { fetchAthletesPerformances, fetchTotalAthletes, fetchAthleteList } from "@/components/dashboard-sections/services/athlete"
 
 export function DashboardSection() {
+
+  useEffect(() => {
+    fetchAthletesPerformances()
+    fetchTotalAthletes()
+  }, [])
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -68,8 +25,8 @@ export function DashboardSection() {
           <p className="text-gray-600 mt-1"> Here's what's happening with your platform today.</p>
         </div>
         <div className="flex gap-3">
-          <Button className="bg-primary hover:bg-primary/90">Create Trial</Button>
-          <Button variant="outline">Generate Report</Button>
+          {/* <Button className="bg-primary hover:bg-primary/90">Create Trial</Button> */}
+          <Button variant="outline" className="border-primary">Generate Report</Button>
         </div>
       </div>
 
