@@ -3,21 +3,23 @@ import { apiRequest } from "@/lib/api"
 
 const fetchTotalScouts = async () => {
     try {
-      const data = await apiRequest('/admin/athletes-total', {
+      const data = await apiRequest('/admin/scouts-total', {
         method: 'GET',
       })
-      console.log(data?.data)
+      // console.log('total scouts: ', data?.data.totalScouts)
+      return data?.data.totalScouts
     } catch (error: any) {
       console.log(error)
     }
 }
 
-const fetchScoutsPerfomances = async () => {
+const fetchScoutsPerformances = async () => {
   try {
-    const data = await apiRequest('/admin/scouts-perfomance', {
+    const data = await apiRequest('/admin/scout-last-month-percentage', {
       method: 'GET',
     })
-    console.log(data?.data)
+    // console.log(data?.data)
+    return data?.data
   } catch (error: any) {
     console.log(error)
   }
@@ -40,6 +42,7 @@ const fetchScoutsList = async () => {
       method: 'GET',
     })
     console.log(data?.data)
+    return data?.data?.scouts
   } catch (error: any) {
     console.log(error)
   }
@@ -58,4 +61,4 @@ const fetchSingleScout = async (id: string) => {
 
 
 
-export { fetchTotalScouts, fetchScoutsPerfomances, fetchYearlyRegisteredScouts, fetchScoutsList, fetchSingleScout }
+export { fetchTotalScouts, fetchScoutsPerformances, fetchYearlyRegisteredScouts, fetchScoutsList, fetchSingleScout }

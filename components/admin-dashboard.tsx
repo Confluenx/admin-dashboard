@@ -1,54 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from 'next/navigation'
-import { observer } from 'mobx-react-lite'
-import authStore from '../store/authStore'
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarFooter,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
-import {
-  LayoutDashboard,
-  Users,
-  Search,
-  Calendar,
-  BarChart3,
-  Bell,
-  HelpCircle,
-  Settings,
-  User,
-  ChevronDown,
-  Filter,
-  Download,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  Eye,
-  Edit,
-  Star,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
-import Image from "next/image"
-import { DashboardSection } from "./dashboard-sections/DashboardSection"
-import { AthletesSection } from "./dashboard-sections/AthletesSection"
-import { ScoutsSection } from "./dashboard-sections/ScoutsSection"
-import { TrialsSection } from "./dashboard-sections/TrialsSection"
-import { AnalyticsSection } from "./dashboard-sections/AnalyticsSection"
-import { NotificationsSection } from "./dashboard-sections/NotificationsSection"
-import { SupportSection } from "./dashboard-sections/SupportSection"
-import { SettingsSection } from "./dashboard-sections/SettingsSection"
+import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { LayoutDashboard, Users, Search, Calendar, BarChart3, Bell, HelpCircle, Settings, User, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import authStore from "@/store/authStore";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, id: "dashboard" },
@@ -59,46 +20,16 @@ const menuItems = [
   { title: "Notifications", icon: Bell, id: "notifications" },
   { title: "Support", icon: HelpCircle, id: "support" },
   { title: "Settings", icon: Settings, id: "settings" },
-]
+];
 
-export const AdminDashboard = observer(function AdminDashboard() {
+export default function DashboardShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const router = useRouter()
-  const [activeSection, setActiveSection] = useState("dashboard")
 
-  useEffect(() => {
-    if (!authStore.token) {
-      router.push('/auth/login')
-    }
-  }, [authStore.token, router])
-
-  const handleLogOut = () => {
-    authStore.logout
+  const handleLogout = () => {
+    authStore?.logout()
     router.push('/auth/login')
   }
-
-  const renderContent = () => {
-    switch (activeSection) {
-      case "dashboard":
-        return <DashboardSection />
-      case "athletes":
-        return <AthletesSection />
-      case "scouts":
-        return <ScoutsSection />
-      case "trials":
-        return <TrialsSection />
-      case "analytics":
-        return <AnalyticsSection />
-      case "notifications":
-        return <NotificationsSection />
-      case "support":
-        return <SupportSection />
-      case "settings":
-        return <SettingsSection />
-      default:
-        return <DashboardSection />
-    }
-  }
-
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-gray-50">
@@ -116,22 +47,31 @@ export const AdminDashboard = observer(function AdminDashboard() {
 
           <SidebarContent className="p-4">
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton
-                    onClick={() => setActiveSection(item.id)}
-                    isActive={activeSection === item.id}
-                    className={`w-full justify-start ${
-                      activeSection === item.id
-                        ? "bg-blue-50 text-blue-700 border-r-2 border-blue-600"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                let path = `/${item.id}`;
+                if (item.id === 'dashboard') path = '/dashboard';
+                if (item.id === 'trials') path = '/trials';
+                const isActive = pathname === path;
+                return (
+                  <SidebarMenuItem key={item.id}>
+                    <Link href={path} legacyBehavior passHref>
+                      <SidebarMenuButton
+                        asChild
+                        className={`w-full justify-start hover:bg-gray-100 ${
+                          isActive
+                            ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                            : 'text-gray-700'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </span>
+                      </SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarContent>
 
@@ -159,7 +99,7 @@ export const AdminDashboard = observer(function AdminDashboard() {
                   Settings
                 </DropdownMenuItem>
                 <Separator />
-                <DropdownMenuItem onClick={() => handleLogOut()}>Sign out</DropdownMenuItem>
+                <DropdownMenuItem onClick={ () => handleLogout()}>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarFooter>
@@ -174,10 +114,9 @@ export const AdminDashboard = observer(function AdminDashboard() {
               <Bell className="h-4 w-4" />
             </Button>
           </header>
-
-          <main className="flex-1 p-6">{renderContent()}</main>
+          <main className="flex-1 p-6">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>
-  )
-})
+  );
+}

@@ -8,7 +8,7 @@ const fetchTotalAthletes = async () => {
       })
       console.log(data?.data)
 
-      return data.data
+      return data?.data.totalAthletes
     } catch (error: any) {
       console.log(error)
     }
@@ -20,6 +20,7 @@ const fetchAthletesPerformances = async () => {
       method: 'GET',
     })
     console.log(data?.data)
+    return data?.data
   } catch (error: any) {
     console.log(error)
   }
