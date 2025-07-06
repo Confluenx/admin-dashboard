@@ -1,8 +1,8 @@
-'use client'
 import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 import Image from 'next/image'
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordPage({ searchParams }: { searchParams: { email?: string } }) {
+  const email = searchParams?.email || '';
   return (
     <div className="flex h-screen w-screen">
       <div className="w-1/2 h-full relative bg-gray-100">
@@ -15,7 +15,7 @@ export default function ResetPasswordPage() {
         />
       </div>
       <div className="w-1/2 h-full flex justify-center items-center p-8 bg-white">
-        <ResetPasswordForm />
+        <ResetPasswordForm email={email} />
       </div>
     </div>
   )

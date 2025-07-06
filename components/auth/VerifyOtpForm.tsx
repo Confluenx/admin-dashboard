@@ -22,7 +22,7 @@ export default function VerifyOtpForm() {
         body: JSON.stringify({ email, otp }),
       })
       setSuccess('OTP verified! You may now reset your password.')
-      router.push('/auth/reset-password')
+      router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
     } catch (err: any) {
       setError(err.message)
     } finally {

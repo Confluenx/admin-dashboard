@@ -1,15 +1,24 @@
 "use client"
 import React, { useState } from 'react'
-import { apiRequest } from '../../lib/api'
-import authStore from '../../store/authStore'
+import { apiRequest } from '@/lib/api'
+import authStore from '@/store/authStore'
+import { useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation';
 
-export default function ResetPasswordForm() {
-  const [email, setEmail] = useState(authStore?.user.email || '')
+interface ResetPasswordFormProps {
+  email?: string;
+}
+
+export default function ResetPasswordForm({ email: initialEmail = '' }: ResetPasswordFormProps) {
+  const searchParams = useSearchParams();
+  const emailFromQuery = searchParams.get('email') || '';
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,6 +39,7 @@ export default function ResetPasswordForm() {
         body: JSON.stringify({ email, password }),
       })
       setSuccess('Password reset successful! You may now log in.')
+      router.push('/auth/login')
     } catch (err: any) {
       setError(err.message)
     } finally {
