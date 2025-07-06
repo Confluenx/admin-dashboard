@@ -42,9 +42,9 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4 text-center">Admin Login</h2>
-      <div>
+    <form onSubmit={handleSubmit} className="w-full max-w-xl">
+      <h2 className="text-4xl font-bold mb-4 text-center">Admin Login</h2>
+      <div className="mt-4">
         <label className="block mb-1">Email</label>
         <input
           type="email"
@@ -54,7 +54,7 @@ export default function LoginForm() {
           required
         />
       </div>
-      <div>
+      <div className="mt-4">
         <label className="block mb-1">Password</label>
         <input
           type="password"
@@ -66,9 +66,10 @@ export default function LoginForm() {
       </div>
       {error && <div className="text-red-600">{error}</div>}
       {success && <div className="text-green-600">{success}</div>}
+
       <button
         type="submit"
-        className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 disabled:opacity-50"
+        className="w-full bg-primary text-white py-2 mt-4 rounded hover:bg-primary/90 disabled:opacity-50"
         disabled={loading}
       >
         {loading ? 'Logging in...' : 'Login'}

@@ -53,13 +53,6 @@ export function TrialsSection() {
           <h1 className="text-3xl font-bold text-gray-900">Trials & Events</h1>
           <p className="text-gray-600 mt-1">Manage trials, events, and scheduling</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline">
-            <Calendar className="h-4 w-4 mr-2" />
-            Calendar View
-          </Button>
-          <Button className="bg-primary hover:bg-primary/90">Create Trial</Button>
-        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>

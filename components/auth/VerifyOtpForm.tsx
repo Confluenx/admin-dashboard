@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { apiRequest } from '../../lib/api'
+import { useRouter } from 'next/navigation'
 
 export default function VerifyOtpForm() {
   const [email, setEmail] = useState('')
@@ -8,6 +9,7 @@ export default function VerifyOtpForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,7 +22,7 @@ export default function VerifyOtpForm() {
         body: JSON.stringify({ email, otp }),
       })
       setSuccess('OTP verified! You may now reset your password.')
-      // TODO: redirect to reset password page if needed
+      router.push('/auth/reset-password')
     } catch (err: any) {
       setError(err.message)
     } finally {

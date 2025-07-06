@@ -8,10 +8,11 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart"
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 import authStore from "@/store/authStore"
 import { ChartBarMultiple } from "../bar-chart/mulitiple-bar-chart"
-import { RecentActivity } from "../recent-activity"
+import { NotificationsSection } from "../recent-activity"
 import { SportDistro } from "../sports-distribution"
-import { fetchAthletesPerformances, fetchTotalAthletes, fetchAthleteList } from "@/components/dashboard-sections/services/athlete"
+import { fetchAthletesPerformances, fetchTotalAthletes, fetchAthletesList } from "@/components/dashboard-sections/services/athlete"
 import { fetchScoutsPerformances, fetchTotalScouts } from "./services/scouts"
+import { fetchTodayApplications, fetchTrialCount, fetchTrialStats } from "./services/trials"
 
 export interface performanceProps {
   lastMonthCount: number,
@@ -20,13 +21,25 @@ export interface performanceProps {
   trend: string
 }
 
+export interface TrialStats {
+  lastMonthCount: number;
+  prevMonthCount: number;
+  percentageChange: number;
+  trend: string;
+}
+
 export function DashboardSection() {
   const [athletesPerformance, setAthletesPerformance] = useState<performanceProps | null>(null)
   const [scoutsPerformance, setScoutsPerformance] = useState<performanceProps| null>(null)
   const [totalScouts, setTotalScouts] = useState('')
   const [totalAthletes, setTotalAthletes] = useState('')
+  const [trialCount, setTrialCount] = useState('')
+  const [todayApplications, setTodayApplications] = useState('')
+  const [isLoading, setIsLoading] = useState(true);
+  const [trialStats, setTrialStats] = useState<TrialStats | null>(null);
 
   async function getData() {
+    setIsLoading(true);
     const performanceData = await fetchAthletesPerformances()
     setAthletesPerformance(performanceData)
     
@@ -38,11 +51,23 @@ export function DashboardSection() {
 
     const scoutTotal = await fetchTotalScouts()
     setTotalScouts(scoutTotal)
+    setIsLoading(false);
+
+    const trialCount = await fetchTrialCount()
+    setTrialCount(trialCount)
+
+    const todayApplications = await fetchTodayApplications()
+    setTodayApplications(todayApplications)
   }
 
   useEffect(() => {
     getData()
   }, [])
+
+  useEffect(() => {
+    fetchTrialStats().then(setTrialStats);
+  }, []);
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -64,13 +89,21 @@ export function DashboardSection() {
             <Users className="h-5 w-5 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">{totalAthletes}</div>
-            {athletesPerformance ? 
-              <div className="flex items-center text-sm text-green-600 mt-1">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                {athletesPerformance ? `${athletesPerformance.percentageChange}% from last month` : '...'}
+            {isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900"></div>
               </div>
-            : null}
+            ) : (
+              <>
+                <div className="text-3xl font-bold text-gray-900">{totalAthletes}</div>
+                {athletesPerformance ? 
+                  <div className={`flex items-center text-sm ${athletesPerformance?.trend == 'increase' ? 'text-green-600' : 'text-red-600'} mt-1`}>
+                    {athletesPerformance?.trend == 'increase' ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" /> }
+                    {athletesPerformance?.percentageChange}% from last month
+                  </div>
+                : null}
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -80,13 +113,21 @@ export function DashboardSection() {
             <Search className="h-5 w-5 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">{totalScouts}</div>
-            {scoutsPerformance ? 
-              <div className={`flex items-center text-sm text-green-600 mt-1`}>
-                {scoutsPerformance?.trend == 'increase' ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" /> }
-                +{scoutsPerformance?.percentageChange}% from last month
+            {isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900"></div>
               </div>
-            : null}
+            ) : (
+              <> 
+                <div className="text-3xl font-bold text-gray-900">{totalScouts || 0}</div>
+                {scoutsPerformance ? 
+                  <div className={`flex items-center text-sm ${scoutsPerformance?.trend == 'increase' ? 'text-green-600' : 'text-red-600'} mt-1`}>
+                {scoutsPerformance?.trend == 'increase' ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" /> }
+                {scoutsPerformance?.percentageChange}% from last month
+              </div>
+                : null}
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -96,11 +137,13 @@ export function DashboardSection() {
             <Calendar className="h-5 w-5 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-gray-900">127</div>
-            <div className="flex items-center text-sm text-green-600 mt-1">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +24% from last month
-            </div>
+            <div className="text-3xl font-bold text-gray-900">{trialCount || 0}</div>
+            {trialStats && (
+              <div className={`flex items-center text-sm ${trialStats.trend == 'increase' ? 'text-green-600' : 'text-red-600'} mt-1`}>
+                {trialStats.trend == 'increase' ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" /> }
+                {trialStats.percentageChange}% from last month
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -109,8 +152,8 @@ export function DashboardSection() {
             <CardTitle className="text-sm font-medium text-gray-600">Applications Today</CardTitle>
             <Activity className="h-5 w-5 text-purple-500" />
           </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-gray-900">83</div>
+          <CardContent> 
+            <div className="text-3xl font-bold text-gray-900">{todayApplications || 0}</div>
             <div className="flex items-center text-sm text-red-600 mt-1">
               <TrendingDown className="h-4 w-4 mr-1" />
               -5% from last month
@@ -125,7 +168,7 @@ export function DashboardSection() {
 
         <ChartBarMultiple />
 
-        <RecentActivity />
+        <NotificationsSection  />
       </div>
     </div>
   )

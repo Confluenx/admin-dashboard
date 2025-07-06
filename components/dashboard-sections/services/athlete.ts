@@ -37,12 +37,13 @@ const fetchYearlyRegisteredAthletes = async () => {
   }
 }
 
-const fetchAthleteList = async () => {
+const fetchAthletesList = async () => {
   try {
     const data = await apiRequest('/admin/athletes?page=1&limit=20', {
       method: 'GET',
     })
-    console.log(data?.data)
+    console.log("athletes list", data?.data)
+    return data?.data.athletes
   } catch (error: any) {
     console.log(error)
   }
@@ -61,4 +62,4 @@ const fetchSingleAthlete = async (id: string) => {
 
 
 
-export { fetchTotalAthletes, fetchAthletesPerformances, fetchYearlyRegisteredAthletes, fetchAthleteList, fetchSingleAthlete }
+export { fetchTotalAthletes, fetchAthletesPerformances, fetchYearlyRegisteredAthletes, fetchAthletesList, fetchSingleAthlete }
