@@ -31,7 +31,7 @@ export default function VerifyOtpForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto mt-10">
+    <form onSubmit={handleSubmit} className="w-full max-w-xl">
       <h2 className="text-2xl font-bold mb-4">Verify OTP</h2>
       <div>
         <label className="block mb-1">Email</label>

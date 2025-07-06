@@ -38,9 +38,9 @@ export default function ResetPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto mt-10">
+    <form onSubmit={handleSubmit} className="w-full max-w-xl">
       <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
-      <div>
+      <div className="mt-4">
         <label className="block mb-1">Email</label>
         <input
           type="email"
@@ -50,7 +50,7 @@ export default function ResetPasswordForm() {
           required
         />
       </div>
-      <div>
+      <div className="mt-4">
         <label className="block mb-1">New Password</label>
         <input
           type="password"
@@ -60,7 +60,7 @@ export default function ResetPasswordForm() {
           required
         />
       </div>
-      <div>
+      <div className="mt-4">
         <label className="block mb-1">Confirm Password</label>
         <input
           type="password"
@@ -74,7 +74,7 @@ export default function ResetPasswordForm() {
       {success && <div className="text-green-600">{success}</div>}
       <button
         type="submit"
-        className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 disabled:opacity-50"
+        className="w-full bg-primary text-white py-2 mt-4 rounded hover:bg-primary/90 disabled:opacity-50"
         disabled={loading}
       >
         {loading ? 'Resetting...' : 'Reset Password'}

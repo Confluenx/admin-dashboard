@@ -27,9 +27,9 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
-      <div>
+    <form onSubmit={handleSubmit} className="w-full max-w-xl">
+      <h2 className="text-4xl font-bold mb-4">Forgot Password</h2>
+      <div className="mt-4">
         <label className="block mb-1">Email</label>
         <input
           type="email"
@@ -43,7 +43,7 @@ export default function ForgotPasswordForm() {
       {success && <div className="text-green-600">{success}</div>}
       <button
         type="submit"
-        className="w-full bg-primary text-white py-2 rounded hover:bg-primary/90 disabled:opacity-50"
+        className="w-full bg-primary text-white py-2 mt-4 rounded hover:bg-primary/90 disabled:opacity-50"
         disabled={loading}
       >
         {loading ? 'Sending...' : 'Send OTP'}

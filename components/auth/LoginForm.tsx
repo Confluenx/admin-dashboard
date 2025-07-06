@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { apiRequest } from '../../lib/api'
 import authStore from '../../store/authStore'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -43,7 +44,12 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-xl">
-      <h2 className="text-4xl font-bold mb-4 text-center">Admin Login</h2>
+      <div className="flex items-center gap-2 mb-8 justify-center">
+        <Image src="/logo.png" alt="logo" width={50} height={50} className="rounded-sm" />
+        <p className="text-4xl font-bold uppercase text-primary">Confluenxe</p>
+      </div>
+
+      {/* <h2 className="text-4xl font-bold mb-2 text-center">Admin Login</h2> */}
       <div className="mt-4">
         <label className="block mb-1">Email</label>
         <input
