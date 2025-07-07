@@ -3,6 +3,9 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiRequest } from "@/lib/api";
 import Image from "next/image";
+import { ArrowLeftIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const statusOptions = ["Active", "Suspended", "Pending", "Inactive"];
 
@@ -10,6 +13,7 @@ export default function ScoutDetailsPage() {
   const { scoutId } = useParams();
   const [scout, setScout] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchScout() {
@@ -81,72 +85,78 @@ export default function ScoutDetailsPage() {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-      </div>
-    );
-  }
-
-  if (!scout) {
-    return <div className="flex justify-center items-center h-screen">Failed to load scout details.</div>;
-  }
-
   const data = scout;
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full">
-        <div className="flex items-center gap-6 mb-6">
-          <div className="w-32 h-32 relative rounded-full overflow-hidden border">
-            <Image src={data.profileImg} alt={data.name} fill className="object-cover" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">{data.name}</h2>
-            <p className="text-gray-600">{data.email}</p>
-            <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">{data.accountStatus}</span>
-          </div>
-        </div>
-        <StatusChanger initialStatus={data.accountStatus} scoutId={data._id} />
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Title</h3>
-          <p className="text-gray-700">{data.title}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">About</h3>
-          <p className="text-gray-700">{data.about}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Location</h3>
-          <p className="text-gray-700">{data.location?.city}, {data.location?.country}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Sports</h3>
-          <p className="text-gray-700">{data.sports?.join(", ")}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Looking For</h3>
-          <p className="text-gray-700">{data.lookFor?.join(", ")}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Position</h3>
-          <p className="text-gray-700">{data.position}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Account Type</h3>
-          <p className="text-gray-700">{data.accountType}</p>
-        </div>
-        <div className="mb-4">
-          <h3 className="font-semibold text-gray-800">Notifications</h3>
-          <ul className="text-gray-700 text-sm list-disc ml-5">
-            <li>Push: {data.pushNotification ? 'Enabled' : 'Disabled'}</li>
-            <li>Email: {data.emailNotification ? 'Enabled' : 'Disabled'}</li>
-            <li>Sound/Vibration: {data.soundVibration ? 'Enabled' : 'Disabled'}</li>
-          </ul>
-        </div>
-        <div className="text-xs text-gray-400 mt-6">Joined: {new Date(data.createdAt).toLocaleString()}</div>
+      <div className="absolute top-4 left-4">
+        <Button variant="outline" className="mb-4" onClick={() => router.back()}>
+          <ArrowLeftIcon className="w-4 h-4" />
+          Back
+        </Button>
       </div>
+
+      { loading && (
+        <div className="flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      ) }
+
+      {!loading && scout && (  
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full">
+          <div className="flex items-center gap-6 mb-6">
+            <div className="w-32 h-32 relative rounded-full overflow-hidden border">
+              <Image src={data.profileImg} alt={data.name} fill className="object-cover" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">{data.name}</h2>
+              <p className="text-gray-600">{data.email}</p>
+              <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">{data.accountStatus}</span>
+            </div>
+          </div>
+          <StatusChanger initialStatus={data.accountStatus} scoutId={data._id} />
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Title</h3>
+            <p className="text-gray-700">{data.title}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">About</h3>
+            <p className="text-gray-700">{data.about}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Location</h3>
+            <p className="text-gray-700">{data.location?.city}, {data.location?.country}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Sports</h3>
+            <p className="text-gray-700">{data.sports?.join(", ")}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Looking For</h3>
+            <p className="text-gray-700">{data.lookFor?.join(", ")}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Position</h3>
+            <p className="text-gray-700">{data.position}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Account Type</h3>
+            <p className="text-gray-700">{data.accountType}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="font-semibold text-gray-800">Notifications</h3>
+            <ul className="text-gray-700 text-sm list-disc ml-5">
+              <li>Push: {data.pushNotification ? 'Enabled' : 'Disabled'}</li>
+              <li>Email: {data.emailNotification ? 'Enabled' : 'Disabled'}</li>
+              <li>Sound/Vibration: {data.soundVibration ? 'Enabled' : 'Disabled'}</li>
+            </ul>
+          </div>
+          <div className="text-xs text-gray-400 mt-6">Joined: {new Date(data.createdAt).toLocaleString()}</div>
+        </div>
+      ) }
+      { !scout && (
+        <div className="flex justify-center items-center h-screen">Failed to load scout details.</div>
+      ) }
     </div>
   );
 } 
