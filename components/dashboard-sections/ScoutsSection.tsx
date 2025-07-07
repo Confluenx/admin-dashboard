@@ -7,6 +7,9 @@ import { Input } from "../ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { performanceProps } from "./DashboardSection"
 import { fetchScoutsList, fetchScoutsPerformances, fetchTotalScouts } from "./services/scouts"
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface scoutProps {
   _id: string,
@@ -186,11 +189,7 @@ export function ScoutsSection() {
                         </div>
                       </td> */}
                       <td className="py-4 px-4">
-                        <div className="flex space-x-2">
-                          <Button size="sm" variant="outline">
-                            <EllipsisVertical className="h-4 w-4 mr-1" />
-                          </Button>
-                        </div>
+                        <ScoutActions scout={scout} />
                       </td>
                     </tr>
                   ))}
@@ -202,4 +201,28 @@ export function ScoutsSection() {
       </Card>
     </div>
   )
+} 
+
+function ScoutActions({ scout }: { scout: scoutProps }) {
+  const router = useRouter();
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button size="sm" variant="outline">
+          <EllipsisVertical className="h-4 w-4 mr-1" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-48">
+        <div className="flex flex-col gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => router.push(`/scouts/${scout._id}`)}
+          >
+            View details
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
 } 
