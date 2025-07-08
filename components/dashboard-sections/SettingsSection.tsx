@@ -1,158 +1,309 @@
-import React from "react"
-import { Button } from "../ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { Badge } from "../ui/badge"
-import { Users, Download, Bell, Settings, Activity, TrendingUp } from "lucide-react"
-import { Input } from "../ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+"use client";
 
-export function SettingsSection() {
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { UserIcon } from "lucide-react";
+import { apiRequest } from "@/lib/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const roles = ["Super Admin", "Content Manager", "Support Agent"];
+
+interface Admin {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastLogin?: string;
+}
+
+export default function AdminUsersSection() {
+  const [admins, setAdmins] = useState<Admin[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAdd, setShowAdd] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: roles[0] });
+  const [editForm, setEditForm] = useState({ role: "", status: "" });
+  const [addLoading, setAddLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+
+  // Fetch admins
+  useEffect(() => {
+    async function fetchAdmins() {
+      setLoading(true);
+      try {
+        const res = await apiRequest("/admin/admins?page=1&limit=20", { method: "GET" });
+        console.log(res.data.admins)
+        setAdmins(res.data?.admins || []);
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAdmins();
+  }, []);
+
+  // Add admin
+  async function handleAddAdmin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setAddLoading(true);
+    try {
+      await apiRequest("/admin/register", { method: "POST", body: form });
+      setShowAdd(false);
+      setForm({ name: "", email: "", password: "", role: roles[0] });
+      // Refresh admins
+      const res = await apiRequest("/admin/admins?page=1&limit=20", { method: "GET" });
+      setAdmins(res.data?.data?.admins || []);
+    } finally {
+      setAddLoading(false);
+    }
+  }
+
+  // Open edit modal
+  function handleEditAdmin(admin: Admin) {
+    setEditingAdmin(admin);
+    setEditForm({ role: admin.role, status: admin.status });
+    setShowEdit(true);
+  }
+
+  // Save edit changes
+  async function handleSaveEdit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!editingAdmin) return;
+    
+    setEditLoading(true);
+    try {
+      // Update role if changed
+      if (editForm.role !== editingAdmin.role) {
+        await apiRequest("/admin/change-role", { admin: editingAdmin._id, role: editForm.role });
+      }
+      
+      // Update status if changed
+      if (editForm.status !== editingAdmin.status) {
+        await apiRequest("/admin/change-status", { admin: editingAdmin._id, status: editForm.status });
+      }
+      
+      setShowEdit(false);
+      setEditingAdmin(null);
+      setEditForm({ role: "", status: "" });
+      
+      // Refresh admins
+      const res = await apiRequest("/admin/admins?page=1&limit=20", { method: "GET" });
+      setAdmins(res.data?.data?.admins || []);
+    } finally {
+      setEditLoading(false);
+    }
+  }
+
+  // Change status
+  async function handleChangeStatus(adminId: string, status: string) {
+    await apiRequest("/admin/change-status", { admin: adminId, status });
+    // Refresh admins
+    const res = await apiRequest("/admin/admins?page=1&limit=20", { method: "GET" });
+    setAdmins(res.data?.data?.admins || []);
+  }
+
+  // Change role
+  async function handleChangeRole(adminId: string, role: string) {
+    await apiRequest("/admin/change-role", { admin: adminId, role });
+    // Refresh admins
+    const res = await apiRequest("/admin/admins?page=1&limit=20", { method: "GET" });
+    setAdmins(res.data?.data?.admins || []);
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">Platform configuration and preferences</p>
+    <div className="p-4">
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <UserIcon className="w-5 h-5" /> Admin Users
+          </h2>
+          <Dialog open={showAdd} onOpenChange={setShowAdd}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setShowAdd(true)}>Add Admin</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Add Admin</DialogTitle>
+              <form onSubmit={handleAddAdmin} className="space-y-4">
+                <Input
+                  placeholder="Name"
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  required
+                />
+                <Input
+                  placeholder="Email"
+                  type="email"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  required
+                />
+                <Input
+                  placeholder="Password"
+                  type="password"
+                  value={form.password}
+                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                  required
+                />
+
+                <Select
+                  value={form.role}
+                  onValueChange={value => setForm(f => ({ ...f, role: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map(role => (
+                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button type="submit" className="w-full" disabled={addLoading}>
+                  {addLoading ? "Adding..." : "Add Admin"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">Save Changes</Button>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr className="border-b">
+                <th className="py-2 px-4 text-left">Admin</th>
+                <th className="py-2 px-4 text-left">Role</th>
+                <th className="py-2 px-4 text-left">Status</th>
+                <th className="py-2 px-4 text-left">Last Login</th>
+                <th className="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8">Loading...</td>
+                </tr>
+              ) : admins.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8">No admins found.</td>
+                </tr>
+              ) : admins.map((admin: Admin) => (
+                <tr key={admin._id} className="border-b hover:bg-gray-50">
+                  <td className="py-4 px-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <UserIcon className="w-6 h-6 text-gray-400" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">{admin.name}</div>
+                      <div className="text-sm text-gray-500">{admin.email}</div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <div className="capitalize text-sm text-gray-500">{admin.role}</div>
+                  </td>
+                  <td className="py-4 px-4">
+                    <Badge
+                      className={
+                        admin.status === "active"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-red-500"
+                      }
+                    >
+                      {admin.status}
+                    </Badge>
+                  </td>
+                  <td className="py-4 px-4">{admin.lastLogin || "—"}</td>
+                  <td className="py-4 px-4 flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => handleEditAdmin(admin)}
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>General Settings</CardTitle>
-            <CardDescription>Basic platform configuration</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Platform Name</label>
-              <Input defaultValue="Confluenxe Sports Scouting" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Support Email</label>
-              <Input defaultValue="support@confluenxe.com" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Default Language</label>
-              <Select defaultValue="en">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="de">German</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Time Zone</label>
-              <Select defaultValue="utc">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="utc">UTC</SelectItem>
-                  <SelectItem value="gmt">GMT</SelectItem>
-                  <SelectItem value="est">EST</SelectItem>
-                  <SelectItem value="pst">PST</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
-              <Users className="h-4 w-4 mr-2" />
-              Bulk User Import
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Download className="h-4 w-4 mr-2" />
-              Export All Data
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Bell className="h-4 w-4 mr-2" />
-              Send Announcement
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Settings className="h-4 w-4 mr-2" />
-              System Maintenance
-            </Button>
-          </CardContent>
-        </Card>
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Security Settings</CardTitle>
-            <CardDescription>Platform security configuration</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
-                <p className="text-sm text-gray-500">Require 2FA for all admin accounts</p>
+
+      {/* Edit Admin Modal */}
+      <Dialog open={showEdit} onOpenChange={setShowEdit}>
+        <DialogContent>
+          <DialogTitle>Edit Admin</DialogTitle>
+          {editingAdmin && (
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                  <UserIcon className="w-6 h-6 text-gray-400" />
+                </div>
+                <div>
+                  <div className="font-medium text-gray-900">{editingAdmin.name}</div>
+                  <div className="text-sm text-gray-500">{editingAdmin.email}</div>
+                </div>
               </div>
-              <Button variant="outline" size="sm">
-                Enable
-              </Button>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Session Timeout</h4>
-                <p className="text-sm text-gray-500">Auto-logout after inactivity</p>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Role</label>
+                <Select
+                  value={editForm.role}
+                  onValueChange={value => setEditForm(f => ({ ...f, role: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map(role => (
+                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <Select defaultValue="30">
-                <SelectTrigger className="w-24">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="15">15m</SelectItem>
-                  <SelectItem value="30">30m</SelectItem>
-                  <SelectItem value="60">1h</SelectItem>
-                  <SelectItem value="120">2h</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Password Policy</h4>
-                <p className="text-sm text-gray-500">Minimum password requirements</p>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Status</label>
+                <Select
+                  value={editForm.status}
+                  onValueChange={value => setEditForm(f => ({ ...f, status: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Button variant="outline" size="sm">
-                Configure
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>System Status</CardTitle>
-            <CardDescription>Platform health overview</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Database</span>
-              <Badge className="bg-green-100 text-green-800">Healthy</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">API Services</span>
-              <Badge className="bg-green-100 text-green-800">Online</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">File Storage</span>
-              <Badge className="bg-green-100 text-green-800">Available</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Email Service</span>
-              <Badge className="bg-yellow-100 text-yellow-800">Warning</Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => {
+                    setShowEdit(false);
+                    setEditingAdmin(null);
+                    setEditForm({ role: "", status: "" });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1" disabled={editLoading}>
+                  {editLoading ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-  )
-} 
+  );
+}

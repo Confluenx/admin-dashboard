@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { fetchAthletesList, fetchAthletesPerformances, fetchTotalAthletes } from "./services/athlete"
 import { performanceProps } from "./DashboardSection"
+import { useRouter } from "next/navigation";
 
 interface athleteProps {
   _id: string,
@@ -31,7 +32,7 @@ export function AthletesSection() {
   const [athletesPerformance, setAthletesPerformance] = useState<performanceProps| null>(null)
   const [athletesTotal, setAthletesTotal] = useState('')
   const [athletesList, setAthletesList] = useState<athleteProps[]>([]);
-
+  const router = useRouter();
 
   async function getData() {
     const athletesPerformanceData = await fetchAthletesPerformances()
@@ -159,7 +160,7 @@ export function AthletesSection() {
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex space-x-2">
-                          <Button size="sm" variant="outline">
+                          <Button size="sm" variant="outline" onClick={() => router.push(`/athletes/${athlete._id}`)}>
                             <EllipsisVertical className="h-4 w-4 mr-1" />
                           </Button>
                         </div>

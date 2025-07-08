@@ -1,6 +1,12 @@
 'use client'
-import { SettingsSection } from "@/components/dashboard-sections/SettingsSection";
+import AdminUsersSection from "@/components/dashboard-sections/SettingsSection";
+// import SettingsSection from "@/components/dashboard-sections/SettingsSection";
 
 export default function SettingsPage() {
-  return <SettingsSection />;
+  return (
+    <div className="flex flex-col gap-4">
+      {/* <SettingsSection /> */}
+      <AdminUsersSection />
+    </div>
+  );
 } 

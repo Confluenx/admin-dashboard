@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Select, SelectItem } from "@/components/ui/select";
 
 const statusOptions = ["Active", "Suspended", "Pending", "Inactive"];
 
@@ -20,7 +21,7 @@ export default function ScoutDetailsPage() {
       setLoading(true);
       try {
         const res = await apiRequest(`/admin/scout/${scoutId}`, { method: "GET" });
-        setScout(res?.data);
+        setScout(res?.data?.scout);
       } catch (error) {
         setScout(null);
       } finally {
@@ -61,16 +62,16 @@ export default function ScoutDetailsPage() {
       <div className="mb-4">
         <h3 className="font-semibold text-gray-800">Change Account Status</h3>
         <div className="flex items-center gap-2 mt-2">
-          <select
-            className="border rounded px-2 py-1 text-sm"
+          <Select
+            defaultValue={initialStatus}
             value={selectedStatus}
-            onChange={e => setSelectedStatus(e.target.value)}
+            onValueChange={setSelectedStatus}
             disabled={statusLoading}
           >
             {statusOptions.map(status => (
-              <option key={status} value={status}>{status}</option>
+              <SelectItem key={status} value={status}>{status}</SelectItem>
             ))}
-          </select>
+          </Select>
           <button
             className="px-3 py-1 rounded bg-blue-600 text-white text-sm font-medium disabled:opacity-50"
             onClick={handleChangeStatus}
@@ -88,7 +89,7 @@ export default function ScoutDetailsPage() {
   const data = scout;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="absolute top-4 left-4">
         <Button variant="outline" className="mb-4" onClick={() => router.back()}>
           <ArrowLeftIcon className="w-4 h-4" />
@@ -103,10 +104,10 @@ export default function ScoutDetailsPage() {
       ) }
 
       {!loading && scout && (  
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full">
+        <div className="bg-white p-8 w-full">
           <div className="flex items-center gap-6 mb-6">
             <div className="w-32 h-32 relative rounded-full overflow-hidden border">
-              <Image src={data.profileImg} alt={data.name} fill className="object-cover" />
+              <Image src={data.profileImg || "/logo.png"} alt={data.name || "Scout"} fill className="object-cover" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-1">{data.name}</h2>
@@ -117,38 +118,38 @@ export default function ScoutDetailsPage() {
           <StatusChanger initialStatus={data.accountStatus} scoutId={data._id} />
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Title</h3>
-            <p className="text-gray-700">{data.title}</p>
+            <p className="text-gray-700 capitalize">{data.title}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">About</h3>
-            <p className="text-gray-700">{data.about}</p>
+            <p className="text-gray-700 capitalize">{data.about}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Location</h3>
-            <p className="text-gray-700">{data.location?.city}, {data.location?.country}</p>
+            <p className="text-gray-700 capitalize">{data.location?.city}, {data.location?.country}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Sports</h3>
-            <p className="text-gray-700">{data.sports?.join(", ")}</p>
+            <p className="text-gray-700 capitalize">{data.sports?.join(", ")}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Looking For</h3>
-            <p className="text-gray-700">{data.lookFor?.join(", ")}</p>
+            <p className="text-gray-700 capitalize">{data.lookFor?.join(", ")}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Position</h3>
-            <p className="text-gray-700">{data.position}</p>
+            <p className="text-gray-700 capitalize">{data.position}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Account Type</h3>
-            <p className="text-gray-700">{data.accountType}</p>
+            <p className="text-gray-700 capitalize">{data.accountType}</p>
           </div>
           <div className="mb-4">
             <h3 className="font-semibold text-gray-800">Notifications</h3>
             <ul className="text-gray-700 text-sm list-disc ml-5">
               <li>Push: {data.pushNotification ? 'Enabled' : 'Disabled'}</li>
               <li>Email: {data.emailNotification ? 'Enabled' : 'Disabled'}</li>
-              <li>Sound/Vibration: {data.soundVibration ? 'Enabled' : 'Disabled'}</li>
+              <li>Sound/Vibration: {data.soundVibration ? 'Enabled' : 'Disabled'}</li> 
             </ul>
           </div>
           <div className="text-xs text-gray-400 mt-6">Joined: {new Date(data.createdAt).toLocaleString()}</div>

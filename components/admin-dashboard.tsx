@@ -16,9 +16,9 @@ const menuItems = [
   { title: "Athletes", icon: Users, id: "athletes" },
   { title: "Scouts", icon: Search, id: "scouts" },
   { title: "Trials & Events", icon: Calendar, id: "trials" },
-  { title: "Analytics", icon: BarChart3, id: "analytics" },
+  // { title: "Analytics", icon: BarChart3, id: "analytics" },
   { title: "Notifications", icon: Bell, id: "notifications" },
-  { title: "Support", icon: HelpCircle, id: "support" },
+  // { title: "Support", icon: HelpCircle, id: "support" },
   { title: "Settings", icon: Settings, id: "settings" },
 ];
 
@@ -40,7 +40,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <Image src="/logo.png" alt="Confluenxe" fill className="object-contain rounded-sm" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Confluenxe</h2>
+                <h2 className="text-lg font-bold text-gray-900">CONFLUENXE</h2>
               </div>
             </div>
           </SidebarHeader>

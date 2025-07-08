@@ -5,7 +5,7 @@ const fetchNotifications = async () => {
       const data = await apiRequest('/admin/notifications?page=1&limit=5', {
         method: 'GET',
       })
-      console.log(data?.data)
+      // console.log(data?.data)
 
       return data?.data.notifications
     } catch (error: any) {
