@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Select, SelectItem } from "@/components/ui/select";
+import { Select, SelectItem, SelectContent } from "@/components/ui/select";
 
 const statusOptions = ["Active", "Suspended", "Pending", "Inactive"];
 
@@ -68,9 +68,11 @@ export default function ScoutDetailsPage() {
             onValueChange={setSelectedStatus}
             disabled={statusLoading}
           >
-            {statusOptions.map(status => (
-              <SelectItem key={status} value={status}>{status}</SelectItem>
-            ))}
+            <SelectContent>
+              {statusOptions.map(status => (
+                <SelectItem key={status} value={status}>{status}</SelectItem>
+              ))}
+            </SelectContent>
           </Select>
           <button
             className="px-3 py-1 rounded bg-blue-600 text-white text-sm font-medium disabled:opacity-50"
